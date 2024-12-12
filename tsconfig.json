@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+, "src/app/hero.jsx", "src/app/layout.jsx", "src/app/page.jsx", "src/app/index.jsx", "src/lib/utils.js", "src/app/dashboard/page.jsx", "src/app/dashboard/components/user-nav.jsx", "src/app/dashboard/components/search.jsx", "src/app/dashboard/components/recent-sales.jsx", "src/app/dashboard/components/main-nav.jsx", "src/app/dashboard/components/date-range-picker.jsx", "src/components/layout.jsx", "src/components/navbar.jsx", "src/components/index.js"  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
