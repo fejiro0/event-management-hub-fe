@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation"; // Next.js router
 import { Button } from "@/registry/new-york/ui/button"; // Assuming you have a Button component
-import { format } from "date-fns"; 
-
+import { format } from "date-fns"; // For date formatting
 
 export default function AdminPage() {
   const [events, setEvents] = useState([]);
@@ -237,17 +236,12 @@ export default function AdminPage() {
               <p>Loading RSVPs...</p>
             ) : (
               <div>
-                {events.map((event) => (
-                  <div key={event.id} className="border p-4 rounded-lg shadow-sm mb-6">
+                {events.map((event, index) => (
+                  <div key={index} className="border p-4 rounded-lg shadow-sm mb-6">
                     <h3 className="font-semibold text-xl">{event.name}</h3>
                     <p className="text-sm text-gray-600">Location: {event.location}</p>
                     <p className="text-sm text-gray-600">Date: {format(new Date(event.date), "PPP")}</p>
                     <p className="text-sm text-gray-600">Attendees: {event.attendees.length}</p>
-                    <ul className="mt-2 space-y-1 text-gray-700">
-                      {event.attendees.map((attendee, index) => (
-                        <li key={index}>{attendee}</li>
-                      ))}
-                    </ul>
                   </div>
                 ))}
               </div>

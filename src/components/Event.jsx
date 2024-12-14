@@ -8,12 +8,10 @@ import { CiCalendarDate } from "react-icons/ci";
 import { IoMdTime } from "react-icons/io";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { Divider } from "@nextui-org/divider";
-import { useRouter } from 'next/navigation'; 
 
 export default function Event() {
   const [events, setEvents] = useState([]);
   const [user, setUser] = useState(null);  // State to hold logged-in user
-  const router = useRouter();  // Using next/router's useRouter hook
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -25,41 +23,34 @@ export default function Event() {
       }
     };
 
-    // Fetch events on load
     fetchEvents();
 
-    // Check if the user is logged in (by checking if JWT token exists in localStorage)
     const token = localStorage.getItem("token");
     if (token) {
-      setUser({ token });  // Example, replace with actual user info parsing if needed
+      try {
+        const decodedUser = JSON.parse(atob(token.split('.')[1])); // Decode the token
+        setUser(decodedUser);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        setUser(null); // Ensure user is null if decoding fails
+      }
     }
   }, []);
 
-  // UseEffect to update the user state whenever the localStorage token changes
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token && !user) {
-      // If token exists and no user state is set, set the user state
-      setUser({ token });
-    }
-  }, [user]);
-
-  // RSVP Event Handler
   const rsvpEvent = async (eventId) => {
-    try {
-      const userId = 'USER_ID';  // Get the user ID from your logged-in user state or context
-      const userName = 'User Name';  // Replace with actual user name
+    if (!user) {
+      alert("You need to be logged in to RSVP.");
+      return;
+    }
 
-      // Send RSVP request to backend
+    try {
       const response = await axios.post('http://localhost:5000/api/events/rsvp', {
         eventId,
-        userId,
-        userName,
+        userId: user._id,
+        userName: user.fullName,
       });
 
-      // If the backend responds successfully, update the event data
       if (response.data.success) {
-        // Update events data after successful RSVP
         setEvents((prevEvents) => 
           prevEvents.map((event) =>
             event._id === eventId
@@ -67,91 +58,72 @@ export default function Event() {
               : event
           )
         );
-
         alert('RSVP Successful!');
       } else {
-        alert('Failed to RSVP. Try again later.');
+        alert(response.data.message || 'Failed to RSVP.');
       }
     } catch (error) {
-      console.error("Error RSVPing for event:", error);
-      alert("Error RSVPing for event");
+      console.error('Error RSVPing for event:', error);
+      alert('Error RSVPing for event');
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container mx-auto px-4 py-8">
       {events.length > 0 ? (
         events.map((event, index) => (
-          <Card className="mb-6 grid grid-cols=2" key={index}>
-            <CardHeader className="flex justify-between items-center">
-              {/* Image on the left */}
-              <div className="flex-shrink-0">
-                <img
-                  src={event.picture || '/image/default.jpg'}
-                  alt={event.name}
-                  className="w-24 h-24 object-cover rounded-full"
-                />
-              </div>
-
-              {/* Center content: Name, Location */}
-              <div className="flex flex-col items-center mx-4 text-center">
+          <Card key={index} className="mb-6">
+            <CardHeader className="flex items-center justify-between">
+              {/* Event Info on the Left */}
+              <div className="flex flex-col">
                 <h3 className="text-lg font-semibold text-default-600">{event.name}</h3>
-                <h5 className="text-sm text-default-400 flex justify-center items-center gap-2">
+                <p className="text-sm text-default-400 flex items-center gap-2">
                   <IoLocationSharp size={16} /> {event.location}
-                </h5>
+                </p>
+                <p className="text-sm text-default-400 flex items-center gap-2">
+                  <CiCalendarDate size={16} /> {new Date(event.date).toLocaleDateString()}
+                </p>
+                <p className="text-sm text-default-400 flex items-center gap-2">
+                  <IoMdTime size={16} /> {event.time}
+                </p>
               </div>
 
-              {/* Available seats on the right */}
-              <div className="flex-shrink-0 text-right bg-lime-300 rounded-2xl px-4 py-1">
-                <h5 className="text-sm text-default-400 flex justify-end items-center gap-2">
+              {/* Available Seats in the Center */}
+              <div className="text-center">
+                <h5 className="text-lg font-bold flex items-center gap-2">
                   <GiRockingChair size={20} /> {event.availableSeats}
                 </h5>
               </div>
+
+              {/* RSVP Button on the Right */}
+              <div>
+                {event.availableSeats > 0 ? (
+                  <button
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    onClick={() => rsvpEvent(event._id)}
+                  >
+                    RSVP Now
+                  </button>
+                ) : (
+                  <button
+                    className="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed"
+                    disabled
+                  >
+                    No Seats Available
+                  </button>
+                )}
+              </div>
             </CardHeader>
 
-            <CardBody className="px-3 py-0 text-sm text-default-400">
+            <CardBody className="px-3 py-2 text-sm text-default-400">
               <p>{event.description}</p>
             </CardBody>
-
-            {/* CardFooter with centered Date and Time */}
-            <CardFooter className="flex justify-center gap-6">
-              <div className="flex gap-4 items-center justify-center text-center">
-                <p className="text-gray-600 flex gap-2">
-                  <CiCalendarDate size={18} />
-                  {new Date(event.date).toLocaleDateString()}
-                </p>
-                <p className="text-gray-600 flex gap-2">
-                  <IoMdTime size={18} /> {event.time}
-                </p>
-              </div>
-            </CardFooter>
-
-            {/* RSVP Button */}
-            {event.availableSeats > 0 ? (
-              <div className="flex justify-end">
-                <button 
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-                  onClick={() => rsvpEvent(event._id)}  // Call RSVP function
-                >
-                  RSVP Now
-                </button>
-              </div>
-            ) : (
-              <div className="flex justify-center">
-                <button 
-                  className="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed"
-                  disabled
-                >
-                  No Seats Available
-                </button>
-              </div>
-            )}
 
             <Divider className="my-4" />
           </Card>
         ))
       ) : (
-        <p className="text-center text-xl">Loading...</p>
+        <p className="text-center text-xl">Loading events...</p>
       )}
     </div>
   );
