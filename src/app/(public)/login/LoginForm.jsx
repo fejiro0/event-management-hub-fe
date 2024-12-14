@@ -14,12 +14,21 @@ const LoginForm = () => {
     try {
       // Make API call to login
       const response = await axios.post('http://localhost:5000/api/auth/login', data);
+      console.log('Response Data:', response.data);
 
-      // Assuming backend returns the token in response.data.token
-      localStorage.setItem('authToken', response.data.token); // Store JWT token in localStorage
+      const {token, user} = response.data;
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('userId', user.id);
 
-      // Redirect to the dashboard
-      router.push('/dashboard');
+      const userRole = user.role;
+
+        if (userRole === 'admin') {
+          router.push('/admin');
+        } else {
+          router.push('/dashboard');
+        }
+
+
     } catch (error) {
       // Handle errors, show error message if login fails
       console.error("Login failed", error);

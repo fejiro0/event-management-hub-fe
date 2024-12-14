@@ -1,4 +1,4 @@
-'use client'; 
+'use client';
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -23,23 +23,22 @@ import { Search } from "@/app/dashboard/components/search";
 import { UserNav } from "@/app/dashboard/components/user-nav";
 import Event from "@/components/Event";
 import { format } from "date-fns";
-
-// export const metadata = {
-//   title: "Dashboard",
-//   description: "User Dashboard",
-// };
+import axios from "axios";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);  // Track user's authentication status
-  const router = useRouter();  // Using the correct useRouter from next/navigation
+  const [userEvents, setUserEvents] = useState([]);  // Track user-specific events (RSVPs)
+  const [allEvents, setAllEvents] = useState([]);  // Track shared events
+  const router = useRouter();
   
   useEffect(() => {
-    // Function to check if user is authenticated (this can vary depending on your setup)
+    // Function to check if user is authenticated
     const checkAuthStatus = () => {
       const token = localStorage.getItem("authToken");  // Assume the token is stored in localStorage
       if (token) {
         setIsAuthenticated(true);  // Set authenticated if token is found
+        fetchUserData(token);  // Fetch user-specific data if authenticated
       } else {
         setIsAuthenticated(false);  // Set not authenticated
         router.push("/login");  // Redirect to login page if not authenticated
@@ -49,6 +48,22 @@ export default function DashboardPage() {
     
     checkAuthStatus();
   }, [router]);
+
+  // Fetch user's RSVP data and all events
+  const fetchUserData = async (token) => {
+    try {
+      // Fetch user-specific events (RSVPs) and shared events
+      const response = await axios.get('http://localhost:5000/api/events', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // Assuming the response contains user events and all events
+      setUserEvents(response.data.userEvents);  // User's RSVPed events
+      setAllEvents(response.data.allEvents);  // All shared events
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   // If still loading, show a loading spinner or message
   if (loading) {
@@ -104,8 +119,32 @@ export default function DashboardPage() {
           {/* Tabs Section */}
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsContent value="overview" className="space-y-4">
+              {/* Show RSVPed Events */}
               <div>
-                <Event />
+                <h3 className="text-xl font-semibold">Your RSVPs</h3>
+                <div>
+                  {userEvents.length > 0 ? (
+                    userEvents.map((event) => (
+                      <Event key={event.id} event={event} />
+                    ))
+                  ) : (
+                    <p>You have not RSVPed to any events yet.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Show All Events */}
+              <div>
+                <h3 className="text-xl font-semibold">All Events</h3>
+                <div>
+                  {allEvents.length > 0 ? (
+                    allEvents.map((event) => (
+                      <Event key={event.id} event={event} />
+                    ))
+                  ) : (
+                    <p>No events available at the moment.</p>
+                  )}
+                </div>
               </div>
             </TabsContent>
           </Tabs>

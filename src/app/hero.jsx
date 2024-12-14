@@ -25,7 +25,7 @@
           Booking workshops, seminars, and club activities <br/> with ease for both students and staff.
           </Typography>
           <div className="pt-8 flex items-center gap-4">
-            <Link href='/auth/login'>
+            <Link href='/login'>
             <ShinyButton>Get started</ShinyButton>
             </Link>
           </div>

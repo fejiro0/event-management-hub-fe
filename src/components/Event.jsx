@@ -46,12 +46,6 @@ export default function Event() {
 
   // RSVP Event Handler
   const rsvpEvent = async (eventId) => {
-    if (!user) {
-      // If no user is logged in, redirect to login page
-      router.push('/login');
-      return;
-    }
-
     try {
       const userId = 'USER_ID';  // Get the user ID from your logged-in user state or context
       const userName = 'User Name';  // Replace with actual user name
