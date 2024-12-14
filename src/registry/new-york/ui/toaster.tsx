@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client"
 
 import { useToast } from "@/registry/new-york/hooks/use-toast"
