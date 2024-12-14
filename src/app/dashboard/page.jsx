@@ -2,8 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/registry/new-york/ui/button";
-import { Tabs, TabsContent } from "@/registry/new-york/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/registry/new-york/ui/tabs";
 import { MainNav } from "@/app/dashboard/components/main-nav";
 import { Search } from "@/app/dashboard/components/search";
 import { UserNav } from "@/app/dashboard/components/user-nav";
@@ -13,36 +19,48 @@ import axios from "axios";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication
   const [allEvents, setAllEvents] = useState([]); // Track shared events
-  const [error, setError] = useState(null); // Track errors, if any
-
+  const router = useRouter();
+  
   useEffect(() => {
-    // Fetch all events
-    const fetchAllEvents = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/events');
-        setAllEvents(response.data); // Assuming the response contains all events
-      } catch (err) {
-        setError("Failed to load events. Please try again.");
-        console.error("Error fetching events:", err);
-      } finally {
-        setLoading(false);
+    // Function to check if user is authenticated
+    const checkAuthStatus = async () => {
+      const token = localStorage.getItem("authToken"); // Assume token is stored in localStorage
+      if (token) {
+        setIsAuthenticated(true); // Set authenticated if token exists
+        await fetchEvents(token); // Fetch shared events
+      } else {
+        setIsAuthenticated(false); // Set not authenticated
+        router.push("/login"); // Redirect to login page if not authenticated
       }
+      setLoading(false); // Stop loading once checks are complete
     };
 
-    fetchAllEvents();
-  }, []);
+    checkAuthStatus();
+  }, [router]);
 
-  const date = new Date();
-  const formattedDate = format(date, "MMMM dd, yyyy");
+  // Fetch all events
+  const fetchEvents = async (token) => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/events', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
+      // Assuming the response contains all events
+      setAllEvents(response.data.allEvents); // Set shared events
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  // If still loading, show a loading spinner or message
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  const date = new Date();
+  const formattedDate = format(date, "MMMM dd, yyyy");
 
   return (
     <>
