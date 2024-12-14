@@ -19,42 +19,49 @@ import axios from "axios";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication
-  const [allEvents, setAllEvents] = useState([]); // Track shared events
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [allEvents, setAllEvents] = useState([]);
   const router = useRouter();
   
   useEffect(() => {
-    // Function to check if user is authenticated
     const checkAuthStatus = async () => {
-      const token = localStorage.getItem("authToken"); // Assume token is stored in localStorage
+      const token = localStorage.getItem("authToken");
+
       if (token) {
-        setIsAuthenticated(true); // Set authenticated if token exists
-        await fetchEvents(token); // Fetch shared events
+        try {
+          // Change to a GET request to validate the token, not POST to login
+          await axios.get('http://localhost:5000/api/auth/verify', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setIsAuthenticated(true);
+          await fetchEvents(token);
+        } catch (error) {
+          console.error("Invalid or expired token:", error);
+          localStorage.removeItem("authToken");
+          router.push("/login");
+        }
       } else {
-        setIsAuthenticated(false); // Set not authenticated
-        router.push("/login"); // Redirect to login page if not authenticated
+        router.push("/login");
       }
-      setLoading(false); // Stop loading once checks are complete
+
+      setLoading(false); // Set loading to false after the auth check completes
     };
 
     checkAuthStatus();
   }, [router]);
 
-  // Fetch all events
   const fetchEvents = async (token) => {
     try {
       const response = await axios.get('http://localhost:5000/api/events', {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      // Assuming the response contains all events
-      setAllEvents(response.data.allEvents); // Set shared events
+      setAllEvents(response.data || []);
     } catch (error) {
       console.error("Error fetching events:", error);
+      setAllEvents([]);
     }
   };
 
-  // If still loading, show a loading spinner or message
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -64,7 +71,6 @@ export default function DashboardPage() {
 
   return (
     <>
-      {/* Mobile View Image */}
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
@@ -82,11 +88,9 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Desktop View */}
       <div className="hidden md:flex flex-col">
         <div className="border-b">
           <div className="flex h-16 items-center px-4">
-            {/* Main Nav */}
             <MainNav className="mx-6" />
             <div className="ml-auto flex items-center space-x-4">
               <Search />
@@ -95,9 +99,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="flex-1 space-y-4 p-8 pt-6">
-          {/* Dashboard Title and Date */}
           <div className="flex items-center justify-between space-y-2 mb-6">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
             <div className="flex items-center space-x-2 bg-slate-200 px-4 py-2 rounded-lg shadow-xs">
@@ -105,16 +107,14 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Tabs Section */}
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsContent value="overview" className="space-y-4">
-              {/* Show All Events */}
               <div>
                 <h3 className="text-xl font-semibold">All Events</h3>
                 <div>
                   {allEvents.length > 0 ? (
                     allEvents.map((event) => (
-                      <Event key={event.id} event={event} />
+                      <Event key={event._id} event={event} />
                     ))
                   ) : (
                     <p>No events available at the moment.</p>
