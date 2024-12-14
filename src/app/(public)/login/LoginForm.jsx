@@ -95,7 +95,7 @@ const LoginForm = () => {
       </div>
 
       <div className="text-center">
-        <p>Don't have an account? click on <a href="/signup" className="text-red-500">Sign up</a></p>
+        <p>Dont&apos;st have an account? click on <a href="/signup" className="text-red-500">Sign up</a></p>
       </div>
     </form>
   );

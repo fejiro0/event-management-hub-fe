@@ -5,9 +5,9 @@ import axios from "axios";
 import { useRouter } from "next/navigation"; // Next.js router
 import { Button } from "@/registry/new-york/ui/button"; // Assuming you have a Button component
 import { format } from "date-fns"; 
-import withAdminAuth from "@/middleware/withAdminAuth"
 
-export default withAdminAuth(AdminPage); {
+
+export default function AdminPage() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newEvent, setNewEvent] = useState({
