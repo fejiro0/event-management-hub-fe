@@ -2,22 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/registry/new-york/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/registry/new-york/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/registry/new-york/ui/tabs";
-import { CalendarDateRangePicker } from "@/app/dashboard/components/date-range-picker";
+import { Tabs, TabsContent } from "@/registry/new-york/ui/tabs";
 import { MainNav } from "@/app/dashboard/components/main-nav";
 import { Search } from "@/app/dashboard/components/search";
 import { UserNav } from "@/app/dashboard/components/user-nav";
@@ -27,51 +13,36 @@ import axios from "axios";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);  // Track user's authentication status
-  const [userEvents, setUserEvents] = useState([]);  // Track user-specific events (RSVPs)
-  const [allEvents, setAllEvents] = useState([]);  // Track shared events
-  const router = useRouter();
-  
+  const [allEvents, setAllEvents] = useState([]); // Track shared events
+  const [error, setError] = useState(null); // Track errors, if any
+
   useEffect(() => {
-    // Function to check if user is authenticated
-    const checkAuthStatus = () => {
-      const token = localStorage.getItem("authToken");  // Assume the token is stored in localStorage
-      if (token) {
-        setIsAuthenticated(true);  // Set authenticated if token is found
-        fetchUserData(token);  // Fetch user-specific data if authenticated
-      } else {
-        setIsAuthenticated(false);  // Set not authenticated
-        router.push("/login");  // Redirect to login page if not authenticated
+    // Fetch all events
+    const fetchAllEvents = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/events');
+        setAllEvents(response.data); // Assuming the response contains all events
+      } catch (err) {
+        setError("Failed to load events. Please try again.");
+        console.error("Error fetching events:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);  // Once check is done, stop loading
     };
-    
-    checkAuthStatus();
-  }, [router]);
 
-  // Fetch user's RSVP data and all events
-  const fetchUserData = async (token) => {
-    try {
-      // Fetch user-specific events (RSVPs) and shared events
-      const response = await axios.get('http://localhost:5000/api/events', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    fetchAllEvents();
+  }, []);
 
-      // Assuming the response contains user events and all events
-      setUserEvents(response.data.userEvents);  // User's RSVPed events
-      setAllEvents(response.data.allEvents);  // All shared events
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
+  const date = new Date();
+  const formattedDate = format(date, "MMMM dd, yyyy");
 
-  // If still loading, show a loading spinner or message
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  const date = new Date();
-  const formattedDate = format(date, "MMMM dd, yyyy");
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <>
@@ -119,20 +90,6 @@ export default function DashboardPage() {
           {/* Tabs Section */}
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsContent value="overview" className="space-y-4">
-              {/* Show RSVPed Events */}
-              <div>
-                <h3 className="text-xl font-semibold">Your RSVPs</h3>
-                <div>
-                  {userEvents.length > 0 ? (
-                    userEvents.map((event) => (
-                      <Event key={event.id} event={event} />
-                    ))
-                  ) : (
-                    <p>You have not RSVPed to any events yet.</p>
-                  )}
-                </div>
-              </div>
-
               {/* Show All Events */}
               <div>
                 <h3 className="text-xl font-semibold">All Events</h3>
