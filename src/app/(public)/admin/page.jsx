@@ -25,7 +25,7 @@ export default function AdminPage() {
     const fetchEvents = async () => {
       const token = localStorage.getItem("authToken");
       try {
-        const response = await axios.get("http://localhost:5000/api/events", {
+        const response = await axios.get("https://campus-event-management-hub.onrender.com/api/events", {
           headers: { Authorization: `Bearer ${token}` }
         });
         setEvents(response.data);
@@ -62,7 +62,7 @@ export default function AdminPage() {
     };
 
     try {
-      const response = await axios.post("http://localhost:5000/api/admin/events", newEventData, {
+      const response = await axios.post("https://campus-event-management-hub.onrender.com/api/admin/events", newEventData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

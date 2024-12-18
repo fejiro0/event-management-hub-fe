@@ -13,7 +13,7 @@ const LoginForm = () => {
   const onSubmit = async (data) => {
     try {
       // Make API call to login
-      const response = await axios.post('http://localhost:5000/api/auth/login', data);
+      const response = await axios.post('https://campus-event-management-hub.onrender.com/api/auth/login', data);
       console.log('Response Data:', response.data);
 
       const {token, user} = response.data;

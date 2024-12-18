@@ -30,7 +30,7 @@ export default function DashboardPage() {
       if (token) {
         try {
           // Change to a GET request to validate the token, not POST to login
-          await axios.get('http://localhost:5000/api/auth/verify', {
+          await axios.get('https://campus-event-management-hub.onrender.com/api/auth/verify', {
             headers: { Authorization: `Bearer ${token}` },
           });
           setIsAuthenticated(true);
@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
   const fetchEvents = async (token) => {
     try {
-      const response = await axios.get('http://localhost:5000/api/events', {
+      const response = await axios.get('https://campus-event-management-hub.onrender.com/api/events', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAllEvents(response.data || []);

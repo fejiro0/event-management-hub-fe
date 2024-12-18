@@ -13,7 +13,7 @@ const SignupForm = () => {
   const onSubmit = async (data) => {
     try {
       // Make API call to signup
-      const response = await axios.post('http://localhost:5000/api/auth/signup', data);
+      const response = await axios.post('https://campus-event-management-hub.onrender.com/api/auth/signup', data);
 
       // Check if the signup is successful
       if (response.status === 201) {
