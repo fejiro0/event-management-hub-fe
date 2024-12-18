@@ -6,8 +6,10 @@ import { GiRockingChair } from "react-icons/gi";
 import { IoLocationSharp } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";  
 import { IoMdTime } from "react-icons/io";
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Skeleton } from "@nextui-org/react";
 import { Divider } from "@nextui-org/divider";
+
+
 
 export default function Event() {
   const [events, setEvents] = useState([]);
@@ -16,7 +18,7 @@ export default function Event() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/events');
+        const response = await axios.get('https://campus-event-management-hub.onrender.com/api/events');
         setEvents(response.data);
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -44,7 +46,7 @@ export default function Event() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/events/rsvp', {
+      const response = await axios.post('https://campus-event-management-hub.onrender.com/api/events/rsvp', {
         eventId,
         userId: user._id,
         userName: user.fullName,
@@ -123,7 +125,7 @@ export default function Event() {
           </Card>
         ))
       ) : (
-        <p className="text-center text-xl">Loading events...</p>
+        <p className="text-center text-xl"><Skeleton /></p>
       )}
     </div>
   );

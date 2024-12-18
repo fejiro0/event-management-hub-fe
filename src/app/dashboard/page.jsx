@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import {Skeleton} from "@nextui-org/skeleton";
 import { Button } from "@/registry/new-york/ui/button";
 import {
   Tabs,
@@ -63,7 +64,7 @@ export default function DashboardPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="m-auto text-center"><Skeleton /></div>;
   }
 
   const date = new Date();
