@@ -19,6 +19,7 @@ const LoginForm = () => {
       const {token, user} = response.data;
       localStorage.setItem('authToken', token);
       localStorage.setItem('userId', user.id);
+      localStorage.setItem('name', user.fullName);
 
       const userRole = user.role;
 

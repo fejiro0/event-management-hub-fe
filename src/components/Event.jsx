@@ -40,10 +40,10 @@ export default function Event() {
   }, []);
 
   const rsvpEvent = async (eventId) => {
-    if (!user) {
-      alert("You need to be logged in to RSVP.");
-      return;
-    }
+    // if (!user) {
+    //   alert("You need to be logged in to RSVP.");
+    //   return;
+    // }
 
     try {
       const response = await axios.post('https://campus-event-management-hub.onrender.com/api/events/rsvp', {

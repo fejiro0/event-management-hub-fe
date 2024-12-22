@@ -8,13 +8,7 @@ export function MainNav({ className, ...props }) {
         Overview
       </Link>
       <Link href="/examples/dashboard" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-        Workshops
-      </Link>
-      <Link href="/examples/dashboard" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-        Seminars
-      </Link>
-      <Link href="/examples/dashboard" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-        Club Activities
+        RSVP events
       </Link>
     </nav>
   );

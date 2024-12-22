@@ -101,7 +101,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex-1 space-y-4 p-8 pt-6">
-          <div className="flex items-center justify-between space-y-2 mb-6">
+          <div className="flex items-center justify-evenly space-y-2 mb-6">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
             <div className="flex items-center space-x-2 bg-slate-200 px-4 py-2 rounded-lg shadow-xs">
               {formattedDate}

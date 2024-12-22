@@ -10,6 +10,8 @@ const RootLayout = ({ children }) => {
           src="https://api.nepcha.com/js/nepcha-analytics.js"
         ></script>
         <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <title>Acity Campus Event Management Hub</title>
       </head>
       <body>
