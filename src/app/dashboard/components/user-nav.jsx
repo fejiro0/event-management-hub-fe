@@ -62,7 +62,7 @@ export function UserNav() {
           <DropdownMenuItem>Profile</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout}>
+        <DropdownMenuItem onClick={logout} className="bg-red-500 hover:bg-red-700">
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
