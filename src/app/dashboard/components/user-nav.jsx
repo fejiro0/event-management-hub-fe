@@ -59,7 +59,7 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:bg-slate-200 rounded-2xl">Profile</DropdownMenuItem>
+          <DropdownMenuItem className="hover:bg-slate-200 rounded-2xl" onClick={() => router.push('/rsvp-events')}>Profile</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout} className="bg-red-500 hover:bg-red-700 text-white rounded-2xl">

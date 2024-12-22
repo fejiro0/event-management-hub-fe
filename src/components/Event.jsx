@@ -40,36 +40,38 @@ export default function Event() {
   }, []);
 
   const rsvpEvent = async (eventId) => {
-    // if (!user) {
-    //   alert("You need to be logged in to RSVP.");
-    //   return;
-    // }
-
+    if (!user) {
+      alert("You need to be logged in to RSVP.");
+      return;
+    }
+  
     try {
       const response = await axios.post('https://campus-event-management-hub.onrender.com/api/events/rsvp', {
         eventId,
         userId: user._id,
         userName: user.fullName,
       });
-
+  
       if (response.data.success) {
-        setEvents((prevEvents) => 
+        // Update local event list
+        setEvents((prevEvents) =>
           prevEvents.map((event) =>
             event._id === eventId
               ? { ...event, availableSeats: event.availableSeats - 1 }
               : event
           )
         );
-        alert('RSVP Successful!');
+  
+        alert("RSVP Successful!");
       } else {
-        alert(response.data.message || 'Failed to RSVP.');
+        alert(response.data.message || "Failed to RSVP.");
       }
     } catch (error) {
-      console.error('Error RSVPing for event:', error);
-      alert('Error RSVPing for event');
+      console.error("Error RSVPing for event:", error);
+      alert("Error RSVPing for event.");
     }
   };
-
+  
   return (
     <div className="container mx-auto px-4 py-8">
       {events.length > 0 ? (
