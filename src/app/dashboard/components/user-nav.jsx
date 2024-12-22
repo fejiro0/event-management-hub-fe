@@ -59,10 +59,10 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem className="hover:bg-slate-200 rounded-2xl">Profile</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout} className="bg-red-500 hover:bg-red-700">
+        <DropdownMenuItem onClick={logout} className="bg-red-500 hover:bg-red-700 text-white rounded-2xl">
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
